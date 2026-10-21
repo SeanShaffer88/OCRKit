@@ -247,7 +247,7 @@ pub extern "C" fn ok_last_error_code() -> c_int {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{ERR_NOT_FOUND, ERR_NOT_SUPPORTED};
+    use crate::ERR_NOT_FOUND;
     use std::ptr;
 
     fn cs(s: &str) -> CString {
@@ -256,6 +256,7 @@ mod tests {
 
     /// A temp dir holding a dummy eng.traineddata — enough to pass
     /// tessdata validation on every build flavor.
+    #[cfg(not(ok_engine))]
     fn dummy_tessdata() -> std::path::PathBuf {
         let dir = std::env::temp_dir().join(format!("ok-ffi-tessdata-{}", std::process::id()));
         std::fs::create_dir_all(&dir).unwrap();
@@ -335,6 +336,7 @@ mod tests {
     #[cfg(not(ok_engine))]
     #[test]
     fn engine_absent_reports_not_supported() {
+        use crate::ERR_NOT_SUPPORTED;
         // A valid-looking tessdata dir + language passes validation
         // and reaches the engine stub.
         let dir = dummy_tessdata();
