@@ -28,5 +28,7 @@
 - Gate: WinDevKit tools/gate.sh (fmt + clippy BOTH targets + full
   tests). Check/clippy do not link the engine — CI's fetch + real
   build + labeled e2e step are the link + native-OCR gates. Windows
-  engine build/OCR is UNVERIFIED until that CI step runs green; do
-  not claim otherwise.
+  engine build/OCR passed at a22edf507971510ef48f17a2a1af5cbc910635bf
+  in https://github.com/SeanShaffer88/OCRKit/actions/runs/39716928538.
+  Revalidate after build/engine changes; do not generalize the fixture
+  result to other architectures, formats, languages or Windows versions.

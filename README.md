@@ -79,10 +79,12 @@ fixture reads at confidence 96).
   the file and in-memory PNG paths as
   `"The quick brown fox jumps over the lazy dog 12345"` with mean
   confidence **96**, using the pinned `eng.traineddata`.
-- **Unverified:** the Windows/MSVC build of the engine stack and native
-  Windows OCR have not run yet. CI (root `ci.yml`, copied to
-  `.github/workflows/ci.yml`) runs the fetch, the gate, and this same
-  e2e on `windows-latest`; that run is the Windows gate.
+- **Verified in Windows x64/MSVC CI:** [run 39716928538](https://github.com/SeanShaffer88/OCRKit/actions/runs/39716928538)
+  passed the pinned-source fetch, formatting, Clippy, unit tests, real
+  engine OCR fixture, and release build at commit
+  `a22edf507971510ef48f17a2a1af5cbc910635bf`. This verifies that
+  fixture and stack on the hosted runner; other architectures, broader
+  image/language coverage, and end-user Windows compatibility remain unverified.
 
 ## v0.1 limits
 
