@@ -86,7 +86,7 @@ fn run(cmd: &mut Command, what: &str) {
 
 fn cmake_build(src: &Path, build_dir: &Path, prefix: &Path, extra_defs: &[String], what: &str) {
     fs::create_dir_all(build_dir).expect("create cmake build dir");
-    if !build_dir.join("CMakeCache.txt").is_file() {
+    {
         let mut cfg = Command::new("cmake");
         cfg.arg("-S").arg(src).arg("-B").arg(build_dir);
         cfg.args([
@@ -99,6 +99,20 @@ fn cmake_build(src: &Path, build_dir: &Path, prefix: &Path, extra_defs: &[String
             // Static libs get linked into a cdylib — need PIC.
             "-DCMAKE_POSITION_INDEPENDENT_CODE=ON".to_string(),
         ]);
+        // zlib 1.3.2 installs its MSVC static target as zs.lib, which
+        // CMake's legacy FindZLIB does not search for. Point downstream
+        // builds at our installed archive, never an unrelated system zlib.
+        for archive in ["zs.lib", "zlibstatic.lib", "zlib.lib", "libz.a"] {
+            let library = prefix.join("lib").join(archive);
+            if library.is_file() {
+                cfg.arg(format!("-DZLIB_LIBRARY={}", library.display()));
+                cfg.arg(format!(
+                    "-DZLIB_INCLUDE_DIR={}",
+                    prefix.join("include").display()
+                ));
+                break;
+            }
+        }
         for d in extra_defs {
             cfg.arg(d);
         }
@@ -268,7 +282,7 @@ fn collect_libs(dir: &Path, out: &mut Vec<(i32, String, PathBuf)>) {
         } else if stem.contains("png") {
             2
         } else if stem.contains('z')
-            && (stem.contains("zlib") || stem.trim_start_matches("lib") == "z")
+            && (stem.contains("zlib") || stem.trim_start_matches("lib") == "z" || stem == "zs")
         {
             3
         } else {
